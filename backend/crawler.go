@@ -15,11 +15,6 @@ type Result struct {
 	Url   string
 	Links []string
 }
-
-// func (r *Result) String() string {
-// 	return fmt.Sprint("url: %v, links: %v", r.url, r.links)
-// }
-
 type Crawler struct {
 	startURL *url.URL
 	visited  map[string]bool
@@ -136,13 +131,3 @@ func (c *Crawler) getAllLinks(doc *html.Node) ([]string, error) {
 	return links, nil
 
 }
-
-// func main() {
-// 	startURL := "https://www.youtube.co.uk"
-// 	c, err := NewCrawler(startURL)
-// 	if err != nil {
-// 		fmt.Println("error %v", err)
-// 		return
-// 	}
-// 	c.crawl()
-// }
