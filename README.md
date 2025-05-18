@@ -25,4 +25,4 @@ $ npm run build
 
 ```
 
-Then navigate to [http://localhost:5173/](http://localhost:5173/).
+Then navigate to [http://localhost:5173/](http://localhost:5173/). The backend and frontend both run on localhost. The backend runs on port `:8080` and the frontend on port `:5173`.
