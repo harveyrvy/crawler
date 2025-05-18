@@ -25,4 +25,4 @@ $ npm run build
 
 ```
 
-Then navigate to [http://localhost:5173/](http://localhost:5173/)
+Then navigate to [http://localhost:5173/](http://localhost:5173/).
