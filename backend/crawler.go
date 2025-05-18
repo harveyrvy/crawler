@@ -4,38 +4,51 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
+	"time"
 
 	"golang.org/x/net/html"
 )
 
 type Result struct {
-	url   string
-	links []string
+	Url   string
+	Links []string
 }
+
+// func (r *Result) String() string {
+// 	return fmt.Sprint("url: %v, links: %v", r.url, r.links)
+// }
 
 type Crawler struct {
 	startURL *url.URL
 	visited  map[string]bool
 	results  []Result
 	client   *http.Client
+	timeout  time.Duration
 }
 
-func NewCrawler(startURL string) (*Crawler, error) {
+func NewCrawler(startURL string, timeoutInSeconds string) (*Crawler, error) {
 	url, err := url.Parse(startURL)
 	if err != nil {
 		return nil, fmt.Errorf("Invalid url %v", err)
+	}
+	timeout, err := strconv.Atoi(timeoutInSeconds)
+	if err != nil {
+		return nil, fmt.Errorf("Invalid timeout %v", err)
 	}
 	crawler := &Crawler{
 		startURL: url,
 		client:   &http.Client{},
 		visited:  make(map[string]bool),
 		results:  []Result{},
+		timeout:  time.Duration(timeout) * time.Second,
 	}
 	return crawler, nil
 }
 
 func (c *Crawler) crawl() error {
+	startTime := time.Now()
 	links, err := c.crawlPage(c.startURL.String())
 	if err != nil {
 		return err
@@ -48,20 +61,23 @@ func (c *Crawler) crawl() error {
 		}
 	}
 
-	for _, l := range uncheckedLinks {
-		newLinks, err := c.crawlPage(l)
-		if err != nil {
-			return err
-		}
-		for _, l := range newLinks {
-			if !c.visited[l] {
-				uncheckedLinks = append(uncheckedLinks, l)
+	for len(uncheckedLinks) > 0 {
+		if !c.visited[uncheckedLinks[0]] {
+			newLinks, err := c.crawlPage(uncheckedLinks[0])
+			if err != nil {
+				return err
+			}
+
+			for _, l := range newLinks {
+				if !c.visited[l] {
+					uncheckedLinks = append(uncheckedLinks, l)
+				}
 			}
 		}
-
-	}
-	for _, r := range c.results {
-		fmt.Println(r.url)
+		uncheckedLinks = uncheckedLinks[1:]
+		if time.Now().After(startTime.Add(c.timeout)) {
+			break
+		}
 	}
 	return nil
 }
@@ -121,12 +137,12 @@ func (c *Crawler) getAllLinks(doc *html.Node) ([]string, error) {
 
 }
 
-func main() {
-	startURL := "https://www.bbc.co.uk"
-	c, err := NewCrawler(startURL)
-	if err != nil {
-		fmt.Println("error %v", err)
-		return
-	}
-	c.crawl()
-}
+// func main() {
+// 	startURL := "https://www.youtube.co.uk"
+// 	c, err := NewCrawler(startURL)
+// 	if err != nil {
+// 		fmt.Println("error %v", err)
+// 		return
+// 	}
+// 	c.crawl()
+// }
