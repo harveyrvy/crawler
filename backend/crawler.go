@@ -86,19 +86,19 @@ func (c *Crawler) crawlPage(url string) ([]string, error) {
 	fmt.Printf("crawling %v\n", url)
 	response, err := http.Get(url)
 	if err != nil {
-		fmt.Println("error getting doc %v", err)
+		fmt.Printf("error getting doc %v", err)
 		return []string{}, err
 	}
 	defer response.Body.Close()
 	doc, err := html.Parse(response.Body)
 	if err != nil {
-		fmt.Println("error parsing doc %v", err)
+		fmt.Printf("error parsing doc %v", err)
 		return []string{}, err
 	}
 	c.visited[url] = true
 	links, err := c.getAllLinks(doc)
 	if err != nil {
-		fmt.Println("error getting links from page %v", err)
+		fmt.Printf("error getting links from page %v", err)
 		return []string{}, err
 	}
 	c.results = append(c.results, Result{url, links})
@@ -115,7 +115,7 @@ func (c *Crawler) getAllLinks(doc *html.Node) ([]string, error) {
 				if attr.Key == "href" {
 					u, err := url.Parse(strings.TrimSpace(attr.Val))
 					if err != nil {
-						fmt.Println("Error parsing link %v", err)
+						fmt.Printf("Error parsing link %v", err)
 					}
 					if (u.Host == c.startURL.Host) || u.Host == "" {
 						resolvedUrl := c.startURL.ResolveReference(u)
