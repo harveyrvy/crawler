@@ -2,17 +2,29 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 )
 
 type Response struct {
-	Success bool     `json:success`
-	Results []Result `json:results`
+	Success bool     `json:"success"`
+	Results []Result `json:"results"`
 }
 
 func getCrawl(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	// Need options for CORS
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
 	url := r.URL.Query().Get("url")
 	timeout := r.URL.Query().Get("timeout")
 	if timeout == "" {
@@ -45,10 +57,6 @@ func getCrawl(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 	return
-}
-
-func homePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "homepage")
 }
 
 func handle() {
