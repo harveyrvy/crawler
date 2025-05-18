@@ -1,0 +1,9 @@
+.result-card {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+ul {
+    list-style-type: none;
+}

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import "./App.css";
+import type { CrawlResponse } from "./types";
+import { ResultList } from "./ResultList";
 
 function App() {
   const [inputValue, setInputValue] = useState("");
-  const [response, setResponse] = useState("");
+  const [response, setResponse] = useState<CrawlResponse>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState("");
 
@@ -25,8 +27,8 @@ function App() {
       setError("Error");
       throw new Error(`API error: ${response.status}`);
     }
-    const data = await response.json();
-    setResponse(JSON.stringify(data));
+    const data: CrawlResponse = await response.json();
+    setResponse(data);
     setIsLoading(false);
   };
 
@@ -42,14 +44,10 @@ function App() {
         ></input>
         <button onClick={getCrawl}>Crawl</button>
       </div>
-
-      <div className="card">
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
       {isLoading && <h2>Loading...</h2>}
-      {response && !isLoading && <div>{response}</div>}
+
+      {response && !isLoading && <ResultList results={response.results} />}
+
       {error && <h2>ERROR!</h2>}
     </>
   );
