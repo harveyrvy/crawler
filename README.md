@@ -12,6 +12,7 @@ $ git clone https://github.com/harveyrvy/crawler.git
 
 ```
 $ cd backend
+$ go mod tidy
 $ go run .
 
 ```

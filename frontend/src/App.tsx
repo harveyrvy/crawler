@@ -45,10 +45,8 @@ function App() {
         <button onClick={getCrawl}>Crawl</button>
       </div>
       {isLoading && <h2>Loading...</h2>}
-
-      {response && !isLoading && <ResultList results={response.results} />}
-
       {error && <h2>ERROR!</h2>}
+      {response && !isLoading && <ResultList results={response.results} />}
     </>
   );
 }
